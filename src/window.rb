@@ -1,18 +1,29 @@
 $LOAD_PATH << '.'
-require "gosu"
-require "zorder.rb"
+require "sdl"
 require "land.rb"
 
-class Window < Gosu::Window
+class Window 
 	def initialize(width, height)
-		super(width, height)
-		self.caption = "Dino Ruby"
-		@background = Gosu::Image.new("../assets/background.png")
-		@land = Land.new
+		@width = width 
+		@height = height
+		# window settings
+		@window = SDL::Screen.open(@width, @height, 32, SDL::SWSURFACE)
+		SDL::WM.set_caption("Dino Ruby", "")
+		# objects for drawing
+		@background = SDL::Surface.new(SDL::SWSURFACE, @width, @height, 32, 0, 0, 0, 0)
+		@land = Land.new(@window)
+	end
+
+	def background
+		@background.fill_rect(0, 0, @width, @height, [255, 255, 255])
+		SDL::Surface.blit(@background, 0, 0, @width, @height, @window, 0, 0)
+	end
+
+	def update
+		@window.update_rect(0, 0, @width, @height)
 	end
 
 	def draw
-		@background.draw(0, 0, ZOrder::Background)
 		@land.draw
 	end
 end
