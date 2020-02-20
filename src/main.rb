@@ -7,7 +7,6 @@ require "window.rb"
 SDL.init(SDL::INIT_VIDEO)
 window = Window.new(WinInfos::WindowWidth, WinInfos::WindowHeight)
 
-window.background
 # main loop
 loop do 
 	while event = SDL::Event.poll
