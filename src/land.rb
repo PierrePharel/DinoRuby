@@ -7,11 +7,10 @@ class Land
 	def initialize(window)
 		@window = window
 		@sprite = [SDL::Surface.load("../assets/land_0.png"), SDL::Surface.load("../assets/land_1.png")]
-		@speed = 6
+		@speed = 4
 		@x = [0, 0]
 		@frames = [0, 1]
 		@y = (@window.h - @sprite[0].h) - 10
-		@velocity = 0.1
 	end
 
 	def animation

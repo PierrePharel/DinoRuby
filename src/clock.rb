@@ -7,7 +7,7 @@ class Clock
 	def initialize
 		@start_ticks = 0
 		@paused_ticks = 0
-		@state = :none # paused, started
+		@state = :stop # paused, started, stop
 	end
 
 	def start
@@ -16,7 +16,7 @@ class Clock
 	end
 
 	def stop
-		@state = :none
+		@state = :stop
 	end
 
 	def pause

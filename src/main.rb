@@ -34,7 +34,7 @@ while state
 	window.draw
 	# update window content
 	window.update
-	SDL.delay(15) if timer.get_ticks < (1000 / FPS)
+	SDL.delay(10) if timer.get_ticks < (1000 / FPS)
 end
 
 SDL.quit
