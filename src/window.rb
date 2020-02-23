@@ -1,6 +1,10 @@
+#!/usr/bin/env ruby -wKU
+# encoding: UTF-8
+
 $LOAD_PATH << '.'
 require "sdl"
 require "land.rb"
+require "dino.rb"
 
 class Window 
 	def initialize(width, height)
@@ -10,17 +14,21 @@ class Window
 		@window = SDL::Screen.open(@width, @height, 32, SDL::HWSURFACE | SDL::DOUBLEBUF)
 		SDL::WM.set_caption("Dino Ruby", "")
 		# objects for drawing
-		@background = SDL::Surface.new(SDL::SWSURFACE, @width, @height, 32, 0, 0, 0, 0)
-		@background.fill_rect(0, 0, @width, @height, [255, 255, 255])
+		@clear_color = @window.format.map_rgb(255, 255, 255)
 		@land = Land.new(@window)
+		@dino = Dino.new(@window)
 	end
 
 	def update
-		@window.update_rect(0, 0, @width, @height)
+		@window.flip
+	end
+
+	def clear
+		@window.fill_rect(0, 0, @width, @height, @clear_color)
 	end
 
 	def draw
-		SDL::Surface.blit(@background, 0, 0, @width, @height, @window, 0, 0)
 		@land.draw
+		@dino.draw
 	end
 end
