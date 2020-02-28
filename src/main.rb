@@ -29,7 +29,7 @@ while state
 	end
 	# draw here
 	window.clear
-	window.draw
+	window.draw 
 	# update window content
 	window.update
 	# fps regulation

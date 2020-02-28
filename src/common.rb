@@ -12,9 +12,3 @@ module Infos
 	WindowWidth = 600
 	WindowHeight = 150
 end
-
-class Animation
-	def initialize
-		
-	end
-end

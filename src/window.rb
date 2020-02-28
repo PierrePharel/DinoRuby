@@ -29,10 +29,10 @@ class Window
 
 	def events(current_event = nil)
 		if current_event == SDL::Key::UP
-			puts("UP KEY PRESSED !")
+			@dino.state = :jump
 		elsif current_event == SDL::Key::DOWN
 			@dino.state = :move_down
-		else
+		elsif @dino.counter == 0 || true
 			@dino.state = :run			
 		end
 	end
