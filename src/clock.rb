@@ -8,6 +8,7 @@ class Clock
 		@start_ticks = 0
 		@paused_ticks = 0
 		@state = :stop # paused, started, stop
+		start
 	end
 
 	def start

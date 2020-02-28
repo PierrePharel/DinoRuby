@@ -1,31 +1,32 @@
 #!/usr/bin/env ruby -wKU
 # encoding: UTF-8
 
+$LOAD_PATH << '.'
 require "sdl"
+require "common.rb"
 
 class Land
 	def initialize(window)
 		@window = window
-		@sprite = [SDL::Surface.load("../assets/land_0.png"), SDL::Surface.load("../assets/land_1.png")]
-		@speed = 4
+		@sprite = SDL::Surface.load("../assets/land.png")
+		@speed = 6
 		@x = [0, 0]
-		@frames = [0, 1]
-		@y = (@window.h - @sprite[0].h) - 10
+		@frame = SDL::Rect.new(0, 0, 600, 14)
+		@y = (@window.h - @sprite.h) - 10
 	end
 
 	def animation
+		SDL::Surface.blit(@sprite, 0, 0, @frame.w, @frame.h, @window, @x[0], @y)
+		SDL::Surface.blit(@sprite, 600, 0, @frame.w, @frame.h, @window, @x[1], @y)
 		@x[0] -= @speed
-		SDL::Surface.blit(@sprite[@frames[0]], 0, 0, @sprite[0].w, @sprite[0].h, @window, @x[0], @y)
 		if @x[0] <= 0
-			@x[1] = @x[0] + @sprite[0].w
+			@x[1] = @x[0] + @frame.w
 		else
 			@x[1] -= @speed
 		end
 
-		SDL::Surface.blit(@sprite[@frames[1]], 0, 0, @sprite[0].w, @sprite[0].h, @window, @x[1], @y)
 		if @x[1] <= 0
-			@frames[0] = rand(0..1) if @x[1] == 0
-			@x[0] = @x[1] + @sprite[1].w
+			@x[0] = @x[1] + @frame.w
 		end
 	end
 

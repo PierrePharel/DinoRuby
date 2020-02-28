@@ -27,6 +27,16 @@ class Window
 		@window.fill_rect(0, 0, @width, @height, @clear_color)
 	end
 
+	def events(current_event = nil)
+		if current_event == SDL::Key::UP
+			puts("UP KEY PRESSED !")
+		elsif current_event == SDL::Key::DOWN
+			@dino.state = :move_down
+		else
+			@dino.state = :run			
+		end
+	end
+
 	def draw
 		@land.draw
 		@dino.draw

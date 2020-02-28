@@ -3,7 +3,7 @@
 
 $LOAD_PATH << '.'
 require "sdl"
-require "clock.rb"
+require "common.rb"
 
 class Dino
 	attr_writer :state
@@ -11,22 +11,29 @@ class Dino
 	def initialize(window)
 		@window = window
 		@state = :run # run, jump, move_down, dead
-		@sprite = SDL::Surface.load("../assets/dino_stand.png")
-		@move_down = SDL::Surface.load("../assets/dino_move_down.png")
-		@x = 0
-		@y = (window.h - @sprite.h) - 10
-		@frame_size = {:width => 48, :height => 47}
-		@cur_frame = 0
+		@run_sprite = SDL::Surface.load("../assets/dino_stand.png")
+		@move_down_sprite = SDL::Surface.load("../assets/dino_move_down.png")
+		@run_pos = SDL::Vec2.new(0, (@window.h - @run_sprite.h) - 10)
+		@down_pos = SDL::Vec2.new(0, (@window.h - @move_down_sprite.h) - 10) 
+		@run_anim = SDL::Rect.new(0, 0, 48, 47)
+		@down_anim = SDL::Rect.new(0, 0, 64, 30)
 	end
 
 	def run
-		SDL::Surface.blit(@sprite, @cur_frame, 0, @frame_size[:width], @frame_size[:height], @window, @x, @y)
-		@cur_frame += @frame_size[:width] if SDL.get_ticks % 6 == 0
-		@cur_frame = 0 if @cur_frame >= 144
+		SDL::Surface.blit(@run_sprite, @run_anim.x, 0, @run_anim.w, @run_anim.h, @window, @run_pos.x, @run_pos.y)
+		@run_anim.x += @run_anim.w if SDL.get_ticks % 16 == 0
+		@run_anim.x = 0 if @run_anim.x == 144
+	end
+
+	def move_down
+		SDL::Surface.blit(@move_down_sprite, @down_anim.x, 0, @down_anim.w, @down_anim.h, @window, @down_pos.x, @down_pos.y)
+		@down_anim.x += @down_anim.w if SDL.get_ticks % 20 == 0
+		@down_anim.x = 0 if @down_anim.x == @move_down_sprite.w
 	end
 
 	def animation
-		run
+		run if @state == :run
+		move_down if @state == :move_down
 	end
 
 	def draw

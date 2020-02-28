@@ -3,17 +3,15 @@
 
 $LOAD_PATH << '.'
 require "sdl"
-require "win_infos.rb"
+require "common.rb"
 require "window.rb"
 require "clock.rb"
-
-FPS = 60
 
 # SDL initialization
 SDL.init(SDL::INIT_VIDEO)
 state = true
 timer = Clock.new
-window = Window.new(WinInfos::WindowWidth, WinInfos::WindowHeight)
+window = Window.new(Infos::WindowWidth, Infos::WindowHeight)
 
 # main loop
 while state
@@ -22,11 +20,11 @@ while state
 		# events parsing
 		case event	
 		when SDL::Event::KeyDown
-			case event.sym
-			when SDL::Key::UP
-			end
+			window.events(event.sym)
 		when SDL::Event::Quit
 			state = false
+		else
+			window.events
 		end
 	end
 	# draw here
@@ -34,7 +32,8 @@ while state
 	window.draw
 	# update window content
 	window.update
-	SDL.delay(10) if timer.get_ticks < (1000 / FPS)
+	# fps regulation
+	SDL.delay((1000 / Infos::FPS) - timer.get_ticks) if timer.get_ticks < (1000 / Infos::FPS)
 end
 
 SDL.quit
