@@ -21,7 +21,7 @@ class Dino
 
 	def run
 		SDL::Surface.blit(@run_sprite, @run_anim.x, 0, @run_anim.w, @run_anim.h, @window, @run_pos.x, @run_pos.y)
-		@run_anim.x += @run_anim.w if SDL.get_ticks % 16 == 0
+		@run_anim.x += @run_anim.w if SDL.get_ticks % 15 == 0
 		@run_anim.x = 0 if @run_anim.x == 144
 	end
 
