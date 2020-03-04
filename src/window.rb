@@ -32,7 +32,7 @@ class Window
 			@dino.state = :jump
 		elsif current_event == SDL::Key::DOWN
 			@dino.state = :move_down
-		elsif @dino.counter == 0 || true
+		else
 			@dino.state = :run			
 		end
 	end

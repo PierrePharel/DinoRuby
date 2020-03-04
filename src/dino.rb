@@ -4,41 +4,30 @@
 $LOAD_PATH << '.'
 require "sdl"
 require "common.rb"
+require "animation.rb"
 
 class Dino
 	attr_writer :state
-	attr_reader :counter
 
 	def initialize(window)
 		@window = window
 		@state = :run # run, jump, move_down, dead
-		# images surfaces
-		@run_sprite = SDL::Surface.load("../assets/dino_stand.png")
-		@move_down_sprite = SDL::Surface.load("../assets/dino_move_down.png")
-		# position of objects
-		@run_pos = SDL::Vec2.new(0, (@window.h - @run_sprite.h) - 10)
-		@down_pos = SDL::Vec2.new(0, (@window.h - @move_down_sprite.h) - 10)
-		@jump_pos = SDL::Vec2.new(0, (@window.h - @run_sprite.h) - 10)
-		# anim rects
-		@run_anim = SDL::Rect.new(0, 0, 48, 47)
-		@down_anim = SDL::Rect.new(0, 0, 64, 30)
-		@counter = 0
+		# animations
+		@run = Animation.new(SDL::Surface.load("../assets/dino_run.png"), SDL::Rect.new(0, 0, 48, 47), 15)
+		@down = Animation.new(SDL::Surface.load("../assets/dino_down.png"), SDL::Rect.new(0, 0, 64, 30), 15)
+		# animations position set
+		@run.pos.y = (@window.h - @run.tex.h) - 10
+		@down.pos.y = (@window.h - @down.tex.h) - 10
 	end
 
 	def run
-		@counter += 1
-		SDL::Surface.blit(@run_sprite, @run_anim.x, 0, @run_anim.w, @run_anim.h, @window, @run_pos.x, @run_pos.y)
-		@run_anim.x += @run_anim.w if @counter >= 15
-		@run_anim.x = 0 if @run_anim.x == 144
-		@counter = 0 if @counter >= 15
+		SDL::Surface.blit(@run.tex, @run.rect.x, 0, @run.rect.w, @run.rect.h, @window, @run.pos.x, @run.pos.y)
+		@run.anime
 	end
 
-	def move_down
-		@counter += 1
-		SDL::Surface.blit(@move_down_sprite, @down_anim.x, 0, @down_anim.w, @down_anim.h, @window, @down_pos.x, @down_pos.y)
-		@down_anim.x += @down_anim.w if @counter >= 20
-		@down_anim.x = 0 if @down_anim.x == @move_down_sprite.w
-		@counter = 0 if @counter >= 20
+	def down
+		SDL::Surface.blit(@down.tex, @down.rect.x, 0, @down.rect.w, @down.rect.h, @window, @down.pos.x, @down.pos.y)
+		@down.anime
 	end
 
 	def jump
@@ -51,7 +40,7 @@ class Dino
 
 	def animation
 		run if @state == :run
-		move_down if @state == :move_down
+		down if @state == :move_down
 		#jump if @state == :jump
 	end
 
