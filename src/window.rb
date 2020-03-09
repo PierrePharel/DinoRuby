@@ -15,8 +15,8 @@ class Window
 		SDL::WM.set_caption("Dino Ruby", "")
 		# objects for drawing
 		@clear_color = @window.format.map_rgb(255, 255, 255)
-		@land = Land.new(@window)
-		@dino = Dino.new(@window)
+		@land = Land.new
+		@dino = Dino.new
 	end
 
 	def update
@@ -28,7 +28,8 @@ class Window
 	end
 
 	def events(current_event = nil)
-		if current_event == SDL::Key::UP
+		if current_event == SDL::Key::UP || @dino.jump.state.a == :up 
+			@dino.jump.state.a = :up
 			@dino.state = :jump
 		elsif current_event == SDL::Key::DOWN
 			@dino.state = :move_down

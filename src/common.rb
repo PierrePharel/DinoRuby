@@ -12,3 +12,5 @@ module Infos
 	WindowWidth = 600
 	WindowHeight = 150
 end
+
+State = Struct.new(:a, :o)

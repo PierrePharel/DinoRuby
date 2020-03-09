@@ -6,8 +6,8 @@ require "sdl"
 require "common.rb"
 
 class Land
-	def initialize(window)
-		@window = window
+	def initialize
+		@window = SDL::Screen.get
 		@sprite = SDL::Surface.load("../assets/land.png")
 		@speed = 6
 		@x = [0, 0]
