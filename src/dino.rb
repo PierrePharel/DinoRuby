@@ -14,15 +14,15 @@ class Dino
 		@window = SDL::Screen.get
 		@state = :run # run, jump, move_down, dead
 		# animations
-		@run = Animation.new(SDL::Surface.load("../assets/dino_run.png"), SDL::Rect.new(0, 0, 48, 47), 15)
+		@run = Animation.new(SDL::Surface.load("../assets/dino_run.png"), SDL::Rect.new(0, 0, 48, 47), 5)
 		@jump = Animation.new(SDL::Surface.load("../assets/dino_run.png"), SDL::Rect.new(0, 0, 48, 47), 10)
-		@down = Animation.new(SDL::Surface.load("../assets/dino_down.png"), SDL::Rect.new(0, 0, 64, 30), 20)
+		@down = Animation.new(SDL::Surface.load("../assets/dino_down.png"), SDL::Rect.new(0, 0, 64, 30), 10)
 		# animations position set
 		@run.pos.y = (@window.h - @run.rect.h) - 10
 		@jump.pos.y = (@window.h - @run.rect.h) - 10
 		@down.pos.y = (@window.h - @down.rect.h) - 10
-		@gravity = 0.6
-		@yvel = 10
+		@gravity = 0.5
+		@yvel = 9
 	end
 
 	def run
@@ -42,26 +42,11 @@ class Dino
 			@yvel -= @gravity
 		end
 
-		if @jump.pos.y >= (SDL::Screen.get.h - @jump.rect.h) - 10 #&& @jump.state.a != :none 
+		if @jump.pos.y >= (SDL::Screen.get.h - @jump.rect.h) - 10 
 			@jump.state.a = :none
-			@yvel = 10
+			@yvel = 9
 			@state = :run
 		end
-		#if @jump.pos.y >= 15 && (@jump.state.o == :none || @jump.state.o == :up) 
- 		#	@jump.state.a = :up
-		#	@jump.pos.y -= 4 #if @counter >= 10
- 		#	@jump.state.o = :up
-		#elsif @jump.pos.y < (SDL::Screen.get.h - @jump.rect.w) - 10 #&& @jump.state.o == :up
-		#	@jump.state.a = :down
-		#	@jump.pos.y += 4 #if @counter >= 10 #(SDL::Screen.get.h - @jump.rect.w) - 10
- 		#	@jump.state.o = :down
-		#end
-
-		#if @jump.pos.y >= (SDL::Screen.get.h - @jump.rect.w) - 10 
-		#	@jump.state.a = :none
-		#	@jump.state.o = :none
-		#	@state = :run
-		#end
 	end
 
 	def animation
