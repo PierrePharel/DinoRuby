@@ -68,3 +68,26 @@ class Rex
 		animation
 	end
 end
+
+class Ptero
+
+	def initialize
+		@window = SDL::Screen.get
+		@ptero = Animation.new(SDL::Surface.load("../assets/ptero.png"), SDL::Rect.new(0, 0, 48, 42), 10)
+		@ptero.pos.x = (@window.w - @ptero.rect.w)
+	end
+
+	def move
+		@ptero.pos.x -= 0.5
+	end
+
+	def animation
+		SDL::Surface.blit(@ptero.tex, @ptero.rect.x, 0, @ptero.rect.w, @ptero.rect.h, @window, @ptero.pos.x, @ptero.pos.y)
+		@ptero.anime
+		move
+	end
+
+	def draw
+		animation
+	end
+end
