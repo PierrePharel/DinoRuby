@@ -13,6 +13,7 @@ state = true
 timer = Clock.new
 window = Window.new(Infos::WindowWidth, Infos::WindowHeight)
 
+SDL::Key.enable_key_repeat(10, 10)
 # main loop
 while state
 	timer.start
@@ -20,11 +21,11 @@ while state
 		# events parsing
 		case event	
 		when SDL::Event::KeyDown
-			window.events(event.sym)
+			window.event(event.sym)
 		when SDL::Event::Quit
 			state = false
 		else
-			window.events
+			window.event
 		end
 	end
 	# draw here

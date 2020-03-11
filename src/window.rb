@@ -6,7 +6,8 @@ require "sdl"
 require "land.rb"
 require "dino.rb"
 
-class Window 
+class Window
+
 	def initialize(width, height)
 		@width = width 
 		@height = height
@@ -16,30 +17,32 @@ class Window
 		# objects for drawing
 		@clear_color = @window.format.map_rgb(255, 255, 255)
 		@land = Land.new
-		@dino = Dino.new
+		@rex = Rex.new
+		@ptero = Ptero.new
 	end
 
 	def update
 		@window.flip
+		SDL::Key.scan
 	end
 
 	def clear
 		@window.fill_rect(0, 0, @width, @height, @clear_color)
 	end
 
-	def events(current_event = nil)
-		if current_event == SDL::Key::UP || @dino.jump.state.a == :up 
-			@dino.jump.state.a = :up
-			@dino.state = :jump
+	def event(current_event = nil)
+		if current_event == SDL::Key::UP || @rex.state == :jump
+			@rex.state = :jump
 		elsif current_event == SDL::Key::DOWN
-			@dino.state = :move_down
+			@rex.state = :move_down
 		else
-			@dino.state = :run			
+			@rex.state = :run			
 		end
 	end
 
 	def draw
 		@land.draw
-		@dino.draw
+		@rex.draw
+		@ptero.draw
 	end
 end

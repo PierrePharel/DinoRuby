@@ -5,7 +5,7 @@ require "sdl"
 require "common.rb"
 
 class Animation
-	attr_accessor :pos, :state
+	attr_accessor :pos
 	attr_reader :tex, :rect, :limit
 
 	def initialize(tex, rect, limit = 0)
@@ -14,7 +14,6 @@ class Animation
 		@rect = rect
 		@limit = limit
 		@counter = 0
-		@state = State.new(:none, :none)
 	end
 
 	def anime
@@ -22,17 +21,5 @@ class Animation
 		@rect.x += @rect.w if @counter >= @limit
 		@rect.x = 0 if @rect.x == @tex.w
 		@counter = 0 if @counter >= @limit
-	end
-
-	def jump
-		@counter += 1
-		@pos.y -= 2 #if @counter
-		if @pos.y <= 6 
-			@counter = 0 
-			@pos.y = (SDL::Screen.get.h - @rect.w) - 10
-			return false
-		end
-
-		return true
 	end
 end
