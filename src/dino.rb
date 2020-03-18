@@ -7,6 +7,7 @@ require "common.rb"
 require "animation.rb"
 
 class Rex
+	attr_reader :run, :jump, :down
 	attr_accessor :state
 
 	def initialize
@@ -59,8 +60,8 @@ class Rex
 	end
 
 	def animation
-		run if @state == :run
-		down if @state == :move_down
+		m_run if @state == :run
+		m_down if @state == :move_down
 		m_jump if @state == :jump
 	end
 
@@ -70,15 +71,25 @@ class Rex
 end
 
 class Ptero
+	attr_reader :ptero
+	#attr_accessor :n
 
 	def initialize
 		@window = SDL::Screen.get
-		@ptero = Animation.new(SDL::Surface.load("../assets/ptero.png"), SDL::Rect.new(0, 0, 48, 42), 10)
+		@ptero = Animation.new(SDL::Surface.load("../assets/ptero.png"), SDL::Rect.new(0, 0, 48, 42), 8)
 		@ptero.pos.x = (@window.w - @ptero.rect.w)
+		@ptero.pos.y = (@window.h - (@ptero.rect.h * 1.5))
+		@y_factor = [1.25, 1.5, 2.25] # down, middle, up 
+		#@n = 0
+		@xvel = 2.8
 	end
 
 	def move
-		@ptero.pos.x -= 0.5
+		@ptero.pos.x -= @xvel 
+		if @ptero.pos.x <= -(@ptero.rect.w)
+			@ptero.pos.y = (@window.h - (@ptero.rect.h * @y_factor[rand(0..2)]))
+			@ptero.pos.x = @window.w
+		end
 	end
 
 	def animation
