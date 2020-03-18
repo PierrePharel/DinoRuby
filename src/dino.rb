@@ -24,12 +24,12 @@ class Rex
 		@yvel = 9
 	end
 
-	def run
+	def m_run
 		SDL::Surface.blit(@run.tex, @run.rect.x, 0, @run.rect.w, @run.rect.h, @window, @run.pos.x, @run.pos.y)
 		@run.anime
 	end
 
-	def down
+	def m_down
 		SDL::Surface.blit(@down.tex, @down.rect.x, 0, @down.rect.w, @down.rect.h, @window, @down.pos.x, @down.pos.y)
 		@down.anime
 	end

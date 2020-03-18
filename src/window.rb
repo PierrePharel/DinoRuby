@@ -5,8 +5,10 @@ $LOAD_PATH << '.'
 require "sdl"
 require "land.rb"
 require "dino.rb"
+#include SDL
 
 class Window
+	attr_reader :land
 
 	def initialize(width, height)
 		@width = width 
@@ -15,7 +17,7 @@ class Window
 		@window = SDL::Screen.open(@width, @height, 32, SDL::HWSURFACE | SDL::DOUBLEBUF)
 		SDL::WM.set_caption("Dino Ruby", "")
 		# objects for drawing
-		@clear_color = @window.format.map_rgb(255, 255, 255)
+		@day_color = @window.format.map_rgb(255, 255, 255)
 		@land = Land.new
 		@rex = Rex.new
 		@ptero = Ptero.new
@@ -27,7 +29,7 @@ class Window
 	end
 
 	def clear
-		@window.fill_rect(0, 0, @width, @height, @clear_color)
+		@window.fill_rect(0, 0, @width, @height, @day_color)
 	end
 
 	def event(current_event = nil)
@@ -36,13 +38,22 @@ class Window
 		elsif current_event == SDL::Key::DOWN
 			@rex.state = :move_down
 		else
-			@rex.state = :run			
+			@rex.state = :run
 		end
 	end
 
 	def draw
 		@land.draw
-		@rex.draw
-		@ptero.draw
+		#@rex.draw
+		#@ptero.draw
+=begin
+		if @rex.state == :jump
+			puts("Collide !") if SDL.check_collision?(@rex.jump, @ptero.ptero)			
+		elsif @rex.state == :down 
+			puts("Collide !") if SDL.check_collision?(@rex.down, @ptero.ptero)			
+		elsif @rex.state == :run 
+			puts("Collide !") if SDL.check_collision?(@rex.run, @ptero.ptero)			
+		end
+=end
 	end
 end

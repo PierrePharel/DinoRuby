@@ -11,7 +11,8 @@ require "clock.rb"
 SDL.init(SDL::INIT_VIDEO)
 state = true
 timer = Clock.new
-window = Window.new(Infos::WindowWidth, Infos::WindowHeight)
+window = Window.new(Screen::WindowWidth, Screen::WindowHeight)
+puts(SDL.instance_methods)
 
 SDL::Key.enable_key_repeat(10, 10)
 # main loop
@@ -34,7 +35,7 @@ while state
 	# update window content
 	window.update
 	# fps regulation
-	SDL.delay((1000 / Infos::FPS) - timer.get_ticks) if timer.get_ticks < (1000 / Infos::FPS)
+	SDL.delay((1000 / Screen::FPS) - timer.get_ticks) if timer.get_ticks < (1000 / Screen::FPS)
 end
 
 SDL.quit
