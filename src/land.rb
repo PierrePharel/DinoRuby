@@ -11,7 +11,7 @@ class Land
 	def initialize
 		@window = SDL::Screen.get
 		@land = Animation.new(SDL::Surface.load("../assets/land.png"), SDL::Rect.new(0, 0, 600, 14), 5)
-		@xvel = 1#6
+		@xvel = 6
 		@x = [0, 0]
 		@land.pos.y = (@window.h - @land.rect.h) - 10
 		@cactus = Cactus.new
@@ -52,7 +52,7 @@ class Cactus
 		@big_ = Animation.new(SDL::Surface.load("../assets/cactus_big_.png"), SDL::Rect.new(0, 0, 75, 50)) 
 		@type = [nil, nil]
 		@cactus = [SDL::Rect.new(0, 0, 0, 0), SDL::Rect.new(0, 0, 0, 0)]
-		@pos = [SDL::Vec2.new(600, 0), SDL::Vec2.new(600, 0)]
+		@pos = [SDL::Vec2.new(600, 0), SDL::Vec2.new(700, 0)]
 	end
 
 	def gen(i)
@@ -95,7 +95,7 @@ class Cactus
 			SDL::Surface.blit(@big_.tex, @cactus[0].x, @cactus[0].y,@cactus[0].w, @cactus[0].h, @window, @pos[0].x, @pos[0].y)			
 		end
 
-		move(0, xvel)
+		move(0, xvel) if (@pos[1].x <= 200 && @pos[0].x > @pos[1].x) || (@pos[1].x >= 200 && @pos[0].x < @pos[1].x)
 		# the second cactus group
 		if (@pos[0].x <= 200 && @pos[1].x > @pos[0].x) || (@pos[0].x >= 200 && @pos[0].x > @pos[1].x)
 			#@pos[1].x = @pos[0].x + 200 if @pos[0].x == 200
@@ -113,5 +113,5 @@ class Cactus
 			
 		@pos[0].x = @window.w if @pos[0].x <= -(@cactus[0].w) + -10
 		@pos[1].x = @window.w if @pos[1].x <= -(@cactus[1].w) + -10 
-	end
+ 	end
 end
