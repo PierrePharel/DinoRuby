@@ -44,7 +44,7 @@ class Window
 
 	def draw
 		@land.draw
-		#@rex.draw
+		@rex.draw
 		#@ptero.draw
 =begin
 		if @rex.state == :jump

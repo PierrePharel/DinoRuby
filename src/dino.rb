@@ -9,6 +9,8 @@ require "animation.rb"
 class Rex
 	attr_reader :run, :jump, :down
 	attr_accessor :state
+	Yvel = 10
+	Gravity = 0.7
 
 	def initialize
 		@window = SDL::Screen.get
@@ -21,8 +23,9 @@ class Rex
 		@run.pos.y = (@window.h - @run.rect.h) - 10
 		@jump.pos.y = (@window.h - @run.rect.h) - 10
 		@down.pos.y = (@window.h - @down.rect.h) - 10
-		@gravity = 0.5
-		@yvel = 9
+		@run.pos.x = 20 
+		@jump.pos.x = 20 
+		@yvel = Yvel
 	end
 
 	def m_run
@@ -39,22 +42,23 @@ class Rex
 		SDL::Surface.blit(@jump.tex, @jump.rect.x, 0, @jump.rect.w, @jump.rect.h, @window, @jump.pos.x, @jump.pos.y)
 		if @state == :jump
 			@jump.pos.y -= @yvel
-			@yvel -= @gravity
+			@yvel -= Gravity
 		end
 
 		if @jump.pos.y >= (@window.h - @jump.rect.h) - 10 
+			@jump.pos.y = (@window.h - @jump.rect.h) - 10
 			@state = :none
-			@yvel = 9
+			@yvel = Yvel
 			@state = :run
 		end
 
 		# fast down move
 		if SDL::Key.press?(SDL::Key::DOWN)
 			@jump.pos.y -= @yvel
-			@yvel -= @gravity
+			@yvel -= Gravity
 			if @jump.pos.y >= (@window.h - @jump.rect.h) - 10
 				@state = :run
-				@yvel = 9
+				@yvel = Yvel
 			end
 		end
 	end
