@@ -9,14 +9,13 @@ require "clock.rb"
 
 # SDL initialization
 SDL.init(SDL::INIT_VIDEO)
-state = true
 timer = Clock.new
 window = Window.new(Screen::WindowWidth, Screen::WindowHeight)
 puts(SDL.instance_methods)
 
 SDL::Key.enable_key_repeat(10, 10)
 # main loop
-while state
+while window.isopen?
 	timer.start
 	while event = SDL::Event.poll
 		# events parsing
@@ -24,16 +23,20 @@ while state
 		when SDL::Event::KeyDown
 			window.event(event.sym)
 		when SDL::Event::Quit
-			state = false
+			window.close
 		else
 			window.event
 		end
 	end
-	# draw here
-	window.clear
-	window.draw 
-	# update window content
-	window.update
+
+	if !window.paused? && window.isopen?
+		# draw here
+		window.clear
+		window.draw 
+		# update window content
+		window.update
+	end
+
 	# fps regulation
 	SDL.delay((1000 / Screen::FPS) - timer.get_ticks) if timer.get_ticks < (1000 / Screen::FPS)
 end

@@ -5,25 +5,22 @@ require "sdl"
 module SDL
 
 	Vec2 = Struct.new(:x, :y)
-	def check_collision?(rect_a, rect_b)
-		# first box
-		left_a = rect_a.pos.x
-		right_a = rect_a.pos.x + rect_a.rect.w
-		top_a = rect_a.pos.y
-		bottom_a = rect_a.pos.y + rect_a.rect.h
-		# second box
-		left_b = rect_b.pos.x
-		right_b = rect_b.pos.x + rect_b.rect.w
-		top_b = rect_b.pos.y
-		bottom_b = rect_b.pos.y + rect_b.rect.h
-
-		return false if bottom_a <= top_b
-
-		return false if top_a >= bottom_b
-
-		return false if right_a <= left_b
-
-		return false if left_a >= right_b
+	Box = Struct.new(:left, :right, :top, :bottom)
+	Texture = Struct.new(:img, :rect)
+	Key::NIL = nil
+	def check_collision?(box_a, box_b)
+		if box_b.class == Array
+			if box_b.size > 0
+				if (box_a.bottom <= box_b[0].top || box_a.top >= box_b[0].bottom || box_a.right <= box_b[0].left || box_a.left >= box_b[0].right) &&\
+				   (box_a.bottom <= box_b[1].top || box_a.top >= box_b[1].bottom || box_a.right <= box_b[1].left || box_a.left >= box_b[1].right)
+					return false
+				else
+					return true 
+				end		
+			end
+		else
+			return false if box_a.bottom <= box_b.top || box_a.top >= box_b.bottom || box_a.right <= box_b.left || box_a.left >= box_b.right 
+		end
 
 		return true
 	end

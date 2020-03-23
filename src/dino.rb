@@ -9,8 +9,8 @@ require "animation.rb"
 class Rex
 	attr_reader :run, :jump, :down
 	attr_accessor :state
-	Yvel = 10
-	Gravity = 0.7
+	Yvel = 9
+	Gravity = 0.5
 
 	def initialize
 		@window = SDL::Screen.get
@@ -22,10 +22,19 @@ class Rex
 		# animations position set
 		@run.pos.y = (@window.h - @run.rect.h) - 10
 		@jump.pos.y = (@window.h - @run.rect.h) - 10
-		@down.pos.y = (@window.h - @down.rect.h) - 10
-		@run.pos.x = 20 
-		@jump.pos.x = 20 
+		@down.pos.y = (@window.h - @down.rect.h) - 10 
 		@yvel = Yvel
+	end
+
+	def draw
+		animation
+	end
+
+	private
+	def move
+		@run.pos.x += 0.5
+		@jump.pos.x += 0.5
+		@down.pos.x += 0.5
 	end
 
 	def m_run
@@ -47,7 +56,7 @@ class Rex
 
 		if @jump.pos.y >= (@window.h - @jump.rect.h) - 10 
 			@jump.pos.y = (@window.h - @jump.rect.h) - 10
-			@state = :none
+			#@state = :none
 			@yvel = Yvel
 			@state = :run
 		end
@@ -67,10 +76,7 @@ class Rex
 		m_run if @state == :run
 		m_down if @state == :move_down
 		m_jump if @state == :jump
-	end
-
-	def draw
-		animation
+		move if @run.pos.x < 20
 	end
 end
 
@@ -80,14 +86,19 @@ class Ptero
 
 	def initialize
 		@window = SDL::Screen.get
-		@ptero = Animation.new(SDL::Surface.load("../assets/ptero.png"), SDL::Rect.new(0, 0, 48, 42), 8)
+		@ptero = Animation.new(SDL::Surface.load("../assets/ptero.png"), SDL::Rect.new(0, 0, 46, 40), 6)
 		@ptero.pos.x = (@window.w - @ptero.rect.w)
 		@ptero.pos.y = (@window.h - (@ptero.rect.h * 1.5))
-		@y_factor = [1.25, 1.5, 2.25] # down, middle, up 
+		@y_factor = [1.25, 1.5, 2.5] # down, middle, up 
 		#@n = 0
-		@xvel = 2.8
+		@xvel = 5
 	end
 
+	def draw
+		animation
+	end
+
+	private
 	def move
 		@ptero.pos.x -= @xvel 
 		if @ptero.pos.x <= -(@ptero.rect.w)
@@ -100,9 +111,5 @@ class Ptero
 		SDL::Surface.blit(@ptero.tex, @ptero.rect.x, 0, @ptero.rect.w, @ptero.rect.h, @window, @ptero.pos.x, @ptero.pos.y)
 		@ptero.anime
 		move
-	end
-
-	def draw
-		animation
 	end
 end

@@ -8,7 +8,7 @@ require "dino.rb"
 #include SDL
 
 class Window
-	attr_reader :land
+	attr_accessor :state
 
 	def initialize(width, height)
 		@width = width 
@@ -21,6 +21,7 @@ class Window
 		@land = Land.new
 		@rex = Rex.new
 		@ptero = Ptero.new
+		@state = :open
 	end
 
 	def update
@@ -32,7 +33,7 @@ class Window
 		@window.fill_rect(0, 0, @width, @height, @day_color)
 	end
 
-	def event(current_event = nil)
+	def event(current_event = SDL::Key::NIL)
 		if current_event == SDL::Key::UP || @rex.state == :jump
 			@rex.state = :jump
 		elsif current_event == SDL::Key::DOWN
@@ -44,16 +45,43 @@ class Window
 
 	def draw
 		@land.draw
-		@rex.draw
 		#@ptero.draw
-=begin
+		@rex.draw
+		check_collision
+	end
+
+	def isopen?
+		return false if @state == :closed
+		return true
+	end
+
+	def close
+		@state = :closed
+	end
+
+	def paused? 
+		return false if @state != :paused
+		return true 
+	end
+
+	private
+	def pause
+		@state = :paused
+	end
+
+	def check_collision
 		if @rex.state == :jump
-			puts("Collide !") if SDL.check_collision?(@rex.jump, @ptero.ptero)			
-		elsif @rex.state == :down 
-			puts("Collide !") if SDL.check_collision?(@rex.down, @ptero.ptero)			
-		elsif @rex.state == :run 
-			puts("Collide !") if SDL.check_collision?(@rex.run, @ptero.ptero)			
-		end
-=end
+			if SDL.check_collision?(@rex.jump.collision_box(0, -30, 0, 0), @ptero.ptero.collision_box(0, -10, 20, -30)) || SDL.check_collision?(@rex.jump.collision_box(10, -30, -30, -20), @land.cactus.collision_box)
+				pause
+			end
+		elsif @rex.state == :move_down 
+			if SDL.check_collision?(@rex.down.collision_box(0, -30, 0, 0), @ptero.ptero.collision_box) || SDL.check_collision?(@rex.down.collision_box(0, -10, 0, 0), @land.cactus.collision_box)
+				pause
+			end
+		else
+			if SDL.check_collision?(@rex.run.collision_box(0, -30, 0, 0), @ptero.ptero.collision_box(0, -10, 20, -30)) || SDL.check_collision?(@rex.run.collision_box(0, -10, 0, 0), @land.cactus.collision_box)
+				pause
+			end
+		end	
 	end
 end
