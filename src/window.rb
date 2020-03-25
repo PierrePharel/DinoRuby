@@ -43,6 +43,7 @@ class Window
 	end
 
 	def draw
+		time
 		@land.draw
 		@ptero.draw
 		@rex.draw
@@ -71,14 +72,23 @@ class Window
 	def check_collision
 		if @rex.state == :jump
 			if SDL.check_collision?(@rex.jump.collision_box(0, -30), @ptero.ptero.collision_box(0, -10, 20, -30)) #|| SDL.check_collision?(@rex.jump.collision_box(10, -30, -30, -20), @land.cactus.collision_box)
+				@rex.state_old = @rex.state
+				@rex.state = :dead
+				draw
 				pause
 			end
 		elsif @rex.state == :move_down 
 			if SDL.check_collision?(@rex.down.collision_box(0, -30), @ptero.ptero.collision_box) #|| SDL.check_collision?(@rex.down.collision_box(0, -15), @land.cactus.collision_box)
+				@rex.state_old = @rex.state
+				@rex.state = :dead
+				draw
 				pause
 			end
-		else
+		elsif @rex.state == :run 
 			if SDL.check_collision?(@rex.run.collision_box(0, -30), @ptero.ptero.collision_box(0, -10, 20, -30)) #|| SDL.check_collision?(@rex.run.collision_box(0, -10), @land.cactus.collision_box)
+				@rex.state_old = @rex.state
+				@rex.state = :dead
+				draw
 				pause
 			end
 		end	

@@ -82,17 +82,55 @@ class Rex
 		end
 	end
 
+	def m_dead
+		pos = nil
+
+		case @state_old
+		when :jump
+			pos = SDL::Vec2.new(@jump.pos.x, @jump.pos.y)
+		when :run
+			pos = SDL::Vec2.new(@run.pos.x, (@run.pos.y + 2))
+		when :move_down
+			pos = SDL::Vec2.new(@down.pos.x, (@down.pos.y - 15))
+		end
+
+		SDL::Surface.blit(@dead.img, 0, 0, @dead.rect.w, @dead.rect.h, @window, pos.x, pos.y)
+	end
+
 	def animation
 		m_run if @state == :run
 		m_down if @state == :move_down
 		m_jump if @state == :jump
 		move if @run.pos.x < 20
 	end
+
+	def update_score
+		@score[:str] = @score[:str].succ if @score[:counter] >= 5
+		@score[:counter] = 0 if @score[:counter] >= 5
+		@score[:counter] += 1
+	end
+
+	def score
+		update_score
+		x = 0
+
+		# hight score
+		SDL::Surface.blit(@numbers.img, 90, 0, @numbers.rect.w * 2, @numbers.rect.h, @window, ((@window.w - (@numbers.rect.w * 10)) - 70), 6)
+		@hi_score.each_char { |c|
+			SDL::Surface.blit(@numbers.img, c.to_i * @numbers.rect.w, 0, @numbers.rect.w, @numbers.rect.h, @window, (((@window.w - (@numbers.rect.w * 6)) + x) - 70), 6)
+			x += (@numbers.rect.w + 2)
+		}
+		x = 0
+		# actual score
+		@score[:str].each_char { |c|
+			SDL::Surface.blit(@numbers.img, c.to_i * @numbers.rect.w, 0, @numbers.rect.w, @numbers.rect.h, @window, ((@window.w - (@numbers.rect.w * 6)) + x), 6)
+			x += (@numbers.rect.w + 2)
+		}
+	end
 end
 
 class Ptero
 	attr_reader :ptero
-	#attr_accessor :n
 
 	def initialize
 		@window = SDL::Screen.get
@@ -100,7 +138,6 @@ class Ptero
 		@ptero.pos.x = (@window.w - @ptero.rect.w)
 		@ptero.pos.y = (@window.h - (@ptero.rect.h * 1.5))
 		@y_factor = [1.25, 1.5, 2.5] # down, middle, up 
-		#@n = 0
 		@xvel = 5
 	end
 

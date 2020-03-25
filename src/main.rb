@@ -30,7 +30,6 @@ while window.isopen?
 
 	if !window.paused? && window.isopen?
 		# draw here
-		window.clear
 		window.draw 
 		# update window content
 		window.update
