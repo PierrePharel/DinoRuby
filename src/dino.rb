@@ -8,19 +8,22 @@ require "animation.rb"
 
 class Rex
 	attr_reader :run, :jump, :down
-	attr_accessor :state, :score_str
+	attr_accessor :state, :state_old
 	Yvel = 9
 	Gravity = 0.5
 
 	def initialize
 		@window = SDL::Screen.get
 		@state = :run # run, jump, move_down, dead
-		@score_str = "00000"
-		# animations
+		@tate_old = :none
+		@score = {:str => "00000", :counter => 0}
+		@hi_score = "00000"
+		# animations and textures
 		@run = Animation.new(SDL::Surface.load("../assets/rex_run.png"), SDL::Rect.new(0, 0, 48, 47), 5)
 		@jump = Animation.new(SDL::Surface.load("../assets/rex_run.png"), SDL::Rect.new(0, 0, 48, 47), 10)
 		@down = Animation.new(SDL::Surface.load("../assets/rex_down.png"), SDL::Rect.new(0, 0, 64, 30), 10)
-		@numbers = SDL::Texture.new(SDL::Surface.load("../assets/numbers.png"), SDL::Rect.new(0, 0, 9, 11))
+		@numbers = SDL::Texture.new(SDL::Surface.load("../assets/score.png"), SDL::Rect.new(0, 0, 9, 11))
+		@dead = SDL::Texture.new(SDL::Surface.load("../assets/rex_dead.png"), SDL::Rect.new(0, 0, 40, 43))
 		# animations position set
 		@run.pos.y = (@window.h - @run.rect.h) - 10
 		@jump.pos.y = (@window.h - @run.rect.h) - 10
@@ -28,18 +31,13 @@ class Rex
 		@yvel = Yvel
 	end
 
-	def score
-		x = 0
-
-		@score_str.each_char { |c|
-			SDL::Surface.blit(@numbers.img, c.to_i * @numbers.rect.w, 0, @numbers.rect.w, @numbers.rect.h, @window, ((@window.w - (@numbers.rect.w * 6)) + x), 6)
-			x += @numbers.rect.w
-		}
-	end
-
 	def draw
 		score
-		animation
+		if @state != :dead
+			animation
+		else
+			m_dead
+		end
 	end
 
 	private

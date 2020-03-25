@@ -26,11 +26,9 @@ class Window
 	def update
 		@window.flip
 		SDL::Key.scan
-		@rex.score_str = @rex.score_str.succ if SDL.get_ticks % 10 == 0
-		puts("Score : #{@rex.score_str}")
 	end
 
-	def clear
+	def time
 		@window.fill_rect(0, 0, @width, @height, @day_color)
 	end
 
