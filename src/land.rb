@@ -20,7 +20,7 @@ class Land
 
 	def draw
 		animation
-		@cactus.draw(@xvel)
+		#@cactus.draw(@xvel)
 	end
 
 	private

@@ -5,7 +5,6 @@ $LOAD_PATH << '.'
 require "sdl"
 require "land.rb"
 require "dino.rb"
-#include SDL
 
 class Window
 	attr_accessor :state
@@ -27,6 +26,8 @@ class Window
 	def update
 		@window.flip
 		SDL::Key.scan
+		@rex.score_str = @rex.score_str.succ if SDL.get_ticks % 10 == 0
+		puts("Score : #{@rex.score_str}")
 	end
 
 	def clear
@@ -45,7 +46,7 @@ class Window
 
 	def draw
 		@land.draw
-		#@ptero.draw
+		@ptero.draw
 		@rex.draw
 		check_collision
 	end
@@ -71,15 +72,15 @@ class Window
 
 	def check_collision
 		if @rex.state == :jump
-			if SDL.check_collision?(@rex.jump.collision_box(0, -30, 0, 0), @ptero.ptero.collision_box(0, -10, 20, -30)) || SDL.check_collision?(@rex.jump.collision_box(10, -30, -30, -20), @land.cactus.collision_box)
+			if SDL.check_collision?(@rex.jump.collision_box(0, -30), @ptero.ptero.collision_box(0, -10, 20, -30)) #|| SDL.check_collision?(@rex.jump.collision_box(10, -30, -30, -20), @land.cactus.collision_box)
 				pause
 			end
 		elsif @rex.state == :move_down 
-			if SDL.check_collision?(@rex.down.collision_box(0, -30, 0, 0), @ptero.ptero.collision_box) || SDL.check_collision?(@rex.down.collision_box(0, -10, 0, 0), @land.cactus.collision_box)
+			if SDL.check_collision?(@rex.down.collision_box(0, -30), @ptero.ptero.collision_box) #|| SDL.check_collision?(@rex.down.collision_box(0, -15), @land.cactus.collision_box)
 				pause
 			end
 		else
-			if SDL.check_collision?(@rex.run.collision_box(0, -30, 0, 0), @ptero.ptero.collision_box(0, -10, 20, -30)) || SDL.check_collision?(@rex.run.collision_box(0, -10, 0, 0), @land.cactus.collision_box)
+			if SDL.check_collision?(@rex.run.collision_box(0, -30), @ptero.ptero.collision_box(0, -10, 20, -30)) #|| SDL.check_collision?(@rex.run.collision_box(0, -10), @land.cactus.collision_box)
 				pause
 			end
 		end	

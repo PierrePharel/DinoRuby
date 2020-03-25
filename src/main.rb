@@ -11,7 +11,6 @@ require "clock.rb"
 SDL.init(SDL::INIT_VIDEO)
 timer = Clock.new
 window = Window.new(Screen::WindowWidth, Screen::WindowHeight)
-puts(SDL.instance_methods)
 
 SDL::Key.enable_key_repeat(10, 10)
 # main loop
