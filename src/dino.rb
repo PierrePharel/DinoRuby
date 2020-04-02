@@ -7,7 +7,7 @@ require "common.rb"
 require "animation.rb"
 
 class Rex
-	attr_reader :run, :jump, :down
+	attr_reader :run, :jump, :down, :score
 	attr_accessor :state, :state_old
 	Yvel = 9
 	Gravity = 0.5
@@ -32,7 +32,7 @@ class Rex
 	end
 
 	def draw
-		score
+		m_score
 		if @state != :dead
 			animation
 		else
@@ -91,7 +91,7 @@ class Rex
 		when :run
 			pos = SDL::Vec2.new(@run.pos.x, (@run.pos.y + 2))
 		when :move_down
-			pos = SDL::Vec2.new(@down.pos.x, (@down.pos.y - 15))
+			pos = SDL::Vec2.new(@down.pos.x + 10, (@down.pos.y - 15))
 		end
 
 		SDL::Surface.blit(@dead.img, 0, 0, @dead.rect.w, @dead.rect.h, @window, pos.x, pos.y)
@@ -110,7 +110,7 @@ class Rex
 		@score[:counter] += 1
 	end
 
-	def score
+	def m_score
 		update_score
 		x = 0
 

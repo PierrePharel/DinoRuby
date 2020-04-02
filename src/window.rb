@@ -16,7 +16,8 @@ class Window
 		@window = SDL::Screen.open(@width, @height, 32, SDL::HWSURFACE | SDL::DOUBLEBUF)
 		SDL::WM.set_caption("Dino Ruby", "")
 		# objects for drawing
-		@day_color = @window.format.map_rgb(255, 255, 255)
+		@day = @window.format.map_rgb(255, 255, 255)
+		@night = @window.format.map_rgb(0, 0, 0)
 		@land = Land.new
 		@rex = Rex.new
 		@ptero = Ptero.new
@@ -29,7 +30,11 @@ class Window
 	end
 
 	def time
-		@window.fill_rect(0, 0, @width, @height, @day_color)
+		if @rex.score[:str].to_i <= 700
+			@window.fill_rect(0, 0, @width, @height, @day)
+		else
+			@window.fill_rect(0, 0, @width, @height, @night)
+		end
 	end
 
 	def event(current_event = SDL::Key::NIL)
