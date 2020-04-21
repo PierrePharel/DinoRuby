@@ -18,12 +18,12 @@ class Land < Objekt
 		@cactus = Cactus.new
 	end
 
-	def draw(can_draw, can_move)
+	def draw(score)
 		# land 
 		animation
 		move
 		# cactus
-		@cactus.draw(@xvel, can_move) #if !can_draw
+		@cactus.draw(@xvel, score)
 	end
 
 	private
@@ -52,71 +52,47 @@ class Cactus < Objekt
 
 	def initialize
 		super
-		@small = SDL::Texture.new(SDL::Surface.load("../assets/cactus_small.png"), SDL::Rect.new(0, 0, 17, 35))
-		@big = SDL::Texture.new(SDL::Surface.load("../assets/cactus_big.png"), SDL::Rect.new(0, 0, 25, 50))
-		@big_ = SDL::Texture.new(SDL::Surface.load("../assets/cactus_big_.png"), SDL::Rect.new(0, 0, 76, 50)) 
-		@type = [nil, nil]
-		@cactus = [nil, nil]
-		@pos = [SDL::Vec2.new(600, 0), SDL::Vec2.new(700, 0)]
+		@tex = [SDL::Texture.new(SDL::Surface.load("../assets/cactus_small.png"), SDL::Rect.new(0, 0, 17, 35)),
+				SDL::Texture.new(SDL::Surface.load("../assets/cactus_big.png"), SDL::Rect.new(0, 0, 25, 50)),
+				SDL::Texture.new(SDL::Surface.load("../assets/cactus_big_four.png"), SDL::Rect.new(0, 0, 76, 50))]
+		@current_tex = nil
+		@rect = nil
+		@pos = SDL::Vec2.new(600, 0)
 	end
 
-	def draw(xvel, can_move)
-		gen(0) if @pos[0].x >= @window.w
-		gen(1) if @pos[1].x >= @window.w
-
-		# the first cactus group 
-		if (@pos[1].x <= 200 && @pos[0].x > @pos[1].x) || (@pos[1].x >= 200 && @pos[0].x < @pos[1].x) || @pos[0].x == 600
-			SDL::Surface.blit(@type[0].img, @cactus[0].x, @cactus[0].y, @cactus[0].w, @cactus[0].h, @window, @pos[0].x, @pos[0].y)
-			move(0, xvel)
-		end
-
-		# the second cactus group
-		if (@pos[0].x <= 200 && @pos[1].x > @pos[0].x) || (@pos[0].x >= 200 && @pos[0].x > @pos[1].x) || @pos[1].x == 600
-			SDL::Surface.blit(@type[1].img, @cactus[1].x, @cactus[1].y, @cactus[1].w, @cactus[1].h, @window, @pos[1].x, @pos[1].y)
-			move(1, xvel)
-		end
-			
-		@pos[0].x = 600 if @pos[0].x <= -(@cactus[0].w)
-		@pos[1].x = 600 if @pos[1].x <= -(@cactus[1].w)
- 	end
-
- 	def collision_box
- 		boxes = []
-
- 		boxes.push(SDL::Box.new(@pos[0].x, @pos[0].x + @cactus[0].w, @pos[0].y, @pos[0].y + @cactus[0].h)) #if @pos[0].x < @window.w && @pos[0].x >= 0
- 		boxes.push(SDL::Box.new(@pos[1].x, @pos[1].x + @cactus[1].w, @pos[1].y, @pos[1].y + @cactus[1].h)) #if @pos[1].x < @window.w && @pos[1].x >= 0
- 		
- 		return boxes
- 	end
-
- 	def get_pos
- 		return @pos
- 	end
-
- 	private
- 	def move(i, xvel)
-		@pos[i].x -= xvel
+	def draw(xvel, score)
+		#if score % 100 != 0
+			gen if @pos.x >= @window.w
+			SDL::Surface.blit(@current_tex.img, @rect.x, @rect.y, @rect.w, @rect.h, @window, @pos.x, @pos.y)
+			move(xvel)
+			@pos.x = 600 if @pos.x <= -(@rect.w)
+		#end
 	end
 
-	def gen(i)
-		@type[i] = [@small, @big, @big_][rand(0..2)] # 0 : small, 1 : big, 2 : big_ 
+	private
+	def move(xvel)
+		@pos.x -= xvel
+	end
+
+	def gen
+		@current_tex = @tex[rand(0..2)] # 0 : small, 1 : big, 2 : big_ 
 		size = rand(1..3) # for number of cactus
 
-		case @type[i]
-		when @small
+		case @current_tex
+		when @tex[0]
 			if size < 3
-				@cactus[i] = SDL::Rect.new(0, 0, size * @type[i].rect.w, 35)
+				@rect = SDL::Rect.new(0, 0, size * @current_tex.rect.w, 35)
 			else
-				x = [0, 3][rand(0..1)] * @type[i].rect.w
-				@cactus[i] = SDL::Rect.new(x, 0, size * @type[i].rect.w, 35)
+				x = [0, 3][rand(0..1)] * @current_tex.rect.w
+				@rect = SDL::Rect.new(x, 0, size * @current_tex.rect.w, 35)
 			end
-			@pos[i].y = (@window.h - @type[i].rect.h) - 10
-		when @big
-			@cactus[i] = SDL::Rect.new(0, 0, size * @type[i].rect.w, 50)
-			@pos[i].y = (@window.h - @type[i].rect.h) - 10 
-		when @big_
-			@cactus[i] = SDL::Rect.new(0, 0, @type[i].rect.w, 50)
-			@pos[i].y = (@window.h - @type[i].rect.h) - 10
+			@pos.y = (@window.h - @current_tex.rect.h) - 10
+		when @tex[1]
+			@rect = SDL::Rect.new(0, 0, size * @current_tex.rect.w, 50)
+			@pos.y = (@window.h - @current_tex.rect.h) - 10 
+		when @tex[2]
+			@rect = SDL::Rect.new(0, 0, @current_tex.rect.w, 50)
+			@pos.y = (@window.h - @current_tex.rect.h) - 10
 		end
 	end
 end
