@@ -6,14 +6,14 @@ require "sdl"
 require "common.rb"
 require "animation.rb"
 
-class Rex
+class Rex < Objekt
 	attr_reader :run, :jump, :down, :score
 	attr_accessor :state, :state_old
 	Yvel = 9
 	Gravity = 0.5
 
 	def initialize
-		@window = SDL::Screen.get
+		super
 		@state = :run # run, jump, move_down, dead
 		@tate_old = :none
 		@score = {:str => "00000", :counter => 0}
@@ -33,6 +33,7 @@ class Rex
 
 	def draw
 		m_score
+		move if @run.pos.x < 20
 		if @state != :dead
 			animation
 		else
@@ -66,7 +67,6 @@ class Rex
 
 		if @jump.pos.y >= (@window.h - @jump.rect.h) - 10 
 			@jump.pos.y = (@window.h - @jump.rect.h) - 10
-			#@state = :none
 			@yvel = Yvel
 			@state = :run
 		end
@@ -101,7 +101,6 @@ class Rex
 		m_run if @state == :run
 		m_down if @state == :move_down
 		m_jump if @state == :jump
-		move if @run.pos.x < 20
 	end
 
 	def update_score
@@ -120,6 +119,7 @@ class Rex
 			SDL::Surface.blit(@numbers.img, c.to_i * @numbers.rect.w, 0, @numbers.rect.w, @numbers.rect.h, @window, (((@window.w - (@numbers.rect.w * 6)) + x) - 70), 6)
 			x += (@numbers.rect.w + 2)
 		}
+
 		x = 0
 		# actual score
 		@score[:str].each_char { |c|
@@ -129,20 +129,30 @@ class Rex
 	end
 end
 
-class Ptero
+class Ptero < Objekt
 	attr_reader :ptero
 
 	def initialize
-		@window = SDL::Screen.get
-		@ptero = Animation.new(SDL::Surface.load("../assets/ptero.png"), SDL::Rect.new(0, 0, 46, 40), 6)
-		@ptero.pos.x = (@window.w - @ptero.rect.w)
+		super
+		@ptero = Animation.new(SDL::Surface.load("../assets/ptero.png"), SDL::Rect.new(0, 0, 46, 40), 10)
+		@ptero.pos.x = @window.w
 		@ptero.pos.y = (@window.h - (@ptero.rect.h * 1.5))
 		@y_factor = [1.25, 1.5, 2.5] # down, middle, up 
 		@xvel = 5
+		@old_score = 0
 	end
 
 	def draw
 		animation
+		move
+	end
+
+	def draw?(score, cactus_pos)
+		if score >= 100
+			return true
+		end
+
+		return false
 	end
 
 	private
@@ -157,6 +167,5 @@ class Ptero
 	def animation
 		SDL::Surface.blit(@ptero.tex, @ptero.rect.x, 0, @ptero.rect.w, @ptero.rect.h, @window, @ptero.pos.x, @ptero.pos.y)
 		@ptero.anime
-		move
 	end
 end

@@ -6,50 +6,52 @@ require "sdl"
 require "common.rb"
 require "animation.rb"
 
-class Land
+class Land < Objekt
 	attr_accessor :cactus
 
 	def initialize
-		@window = SDL::Screen.get
-		@land = SDL::Texture.new(SDL::Surface.load("../assets/land.png"), SDL::Rect.new(0, 0, 600, 14))
+		super
+		@tex = SDL::Texture.new(SDL::Surface.load("../assets/land.png"), SDL::Rect.new(0, 0, 600, 14))
 		@xvel = 6
 		@x = [0, 0]
-		@pos = SDL::Vec2.new(0, (@window.h - @land.rect.h) - 10)
+		@pos = SDL::Vec2.new(0, (@window.h - @tex.rect.h) - 10)
 		@cactus = Cactus.new
 	end
 
-	def draw
+	def draw(can_draw, can_move)
+		# land 
 		animation
-		#@cactus.draw(@xvel)
+		move
+		# cactus
+		@cactus.draw(@xvel, can_move) #if !can_draw
 	end
 
 	private
 	def move
 		if @x[0] <= 0
 			@x[0] -= @xvel
-			@x[1] = @x[0] + @land.rect.w
+			@x[1] = @x[0] + @tex.rect.w
 		else
 			@x[1] -= @xvel
 		end
 
 		if @x[1] <= 0
-			@x[0] = @x[1] + @land.rect.w
+			@x[0] = @x[1] + @tex.rect.w
 		end
 	end
 
 	def animation
-		@land.rect.x = [0, 600][rand(0..1)] if @x[0] >= @window.w
-		SDL::Surface.blit(@land.img, @land.rect.x, 0, @land.rect.w, @land.rect.h, @window, @x[0], @pos.y)
-		SDL::Surface.blit(@land.img, @land.rect.w, 0, @land.rect.w, @land.rect.h, @window, @x[1], @pos.y)
-		move
+		@tex.rect.x = [0, 600][rand(0..1)] if @x[0] >= @window.w
+		SDL::Surface.blit(@tex.img, @tex.rect.x, 0, @tex.rect.w, @tex.rect.h, @window, @x[0], @pos.y)
+		SDL::Surface.blit(@tex.img, @tex.rect.w, 0, @tex.rect.w, @tex.rect.h, @window, @x[1], @pos.y)
 	end
 end
 
-class Cactus
-	attr_reader :cactus, :pos
+class Cactus < Objekt
+	attr_reader :pos
 
 	def initialize
-		@window = SDL::Screen.get
+		super
 		@small = SDL::Texture.new(SDL::Surface.load("../assets/cactus_small.png"), SDL::Rect.new(0, 0, 17, 35))
 		@big = SDL::Texture.new(SDL::Surface.load("../assets/cactus_big.png"), SDL::Rect.new(0, 0, 25, 50))
 		@big_ = SDL::Texture.new(SDL::Surface.load("../assets/cactus_big_.png"), SDL::Rect.new(0, 0, 76, 50)) 
@@ -58,24 +60,24 @@ class Cactus
 		@pos = [SDL::Vec2.new(600, 0), SDL::Vec2.new(700, 0)]
 	end
 
-	def draw(xvel)
+	def draw(xvel, can_move)
 		gen(0) if @pos[0].x >= @window.w
 		gen(1) if @pos[1].x >= @window.w
 
 		# the first cactus group 
-		if (@pos[1].x <= 200 && @pos[0].x > @pos[1].x) || (@pos[1].x >= 200 && @pos[0].x < @pos[1].x)
-			SDL::Surface.blit(@type[0].img, @cactus[0].x, @cactus[0].y,@cactus[0].w, @cactus[0].h, @window, @pos[0].x, @pos[0].y)
+		if (@pos[1].x <= 200 && @pos[0].x > @pos[1].x) || (@pos[1].x >= 200 && @pos[0].x < @pos[1].x) || @pos[0].x == 600
+			SDL::Surface.blit(@type[0].img, @cactus[0].x, @cactus[0].y, @cactus[0].w, @cactus[0].h, @window, @pos[0].x, @pos[0].y)
 			move(0, xvel)
 		end
 
 		# the second cactus group
-		if (@pos[0].x <= 200 && @pos[1].x > @pos[0].x) || (@pos[0].x >= 200 && @pos[0].x > @pos[1].x)
-			SDL::Surface.blit(@type[1].img, @cactus[1].x, @cactus[1].y,@cactus[1].w, @cactus[1].h, @window, @pos[1].x, @pos[1].y)
+		if (@pos[0].x <= 200 && @pos[1].x > @pos[0].x) || (@pos[0].x >= 200 && @pos[0].x > @pos[1].x) || @pos[1].x == 600
+			SDL::Surface.blit(@type[1].img, @cactus[1].x, @cactus[1].y, @cactus[1].w, @cactus[1].h, @window, @pos[1].x, @pos[1].y)
 			move(1, xvel)
 		end
 			
-		@pos[0].x = @window.w if @pos[0].x <= -(@cactus[0].w) + -10
-		@pos[1].x = @window.w if @pos[1].x <= -(@cactus[1].w) + -10 
+		@pos[0].x = 600 if @pos[0].x <= -(@cactus[0].w)
+		@pos[1].x = 600 if @pos[1].x <= -(@cactus[1].w)
  	end
 
  	def collision_box
@@ -85,6 +87,10 @@ class Cactus
  		boxes.push(SDL::Box.new(@pos[1].x, @pos[1].x + @cactus[1].w, @pos[1].y, @pos[1].y + @cactus[1].h)) #if @pos[1].x < @window.w && @pos[1].x >= 0
  		
  		return boxes
+ 	end
+
+ 	def get_pos
+ 		return @pos
  	end
 
  	private

@@ -36,3 +36,10 @@ module Screen
 	WindowHeight = 150
 end
 
+class Objekt
+
+	def initialize
+		@window = SDL::Screen.get
+	end
+end
+

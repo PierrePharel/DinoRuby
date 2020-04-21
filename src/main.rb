@@ -17,7 +17,7 @@ SDL::Key.enable_key_repeat(10, 10)
 while window.isopen?
 	timer.start
 	while event = SDL::Event.poll
-		# events parsing
+		# events handling
 		case event	
 		when SDL::Event::KeyDown
 			window.event(event.sym)
