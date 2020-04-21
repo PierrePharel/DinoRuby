@@ -19,9 +19,9 @@ class Rex < Objekt
 		@score = {:str => "00000", :counter => 0}
 		@hi_score = "00000"
 		# animations and textures
-		@run = Animation.new(SDL::Surface.load("../assets/rex_run.png"), SDL::Rect.new(0, 0, 48, 47), 5)
-		@jump = Animation.new(SDL::Surface.load("../assets/rex_run.png"), SDL::Rect.new(0, 0, 48, 47), 10)
-		@down = Animation.new(SDL::Surface.load("../assets/rex_down.png"), SDL::Rect.new(0, 0, 64, 30), 10)
+		@run = Animation.new(SDL::Texture.new(SDL::Surface.load("../assets/rex_run.png"), SDL::Rect.new(0, 0, 48, 47)), 5)
+		@jump = Animation.new(SDL::Texture.new(SDL::Surface.load("../assets/rex_run.png"), SDL::Rect.new(0, 0, 48, 47)), 10)
+		@down = Animation.new(SDL::Texture.new(SDL::Surface.load("../assets/rex_down.png"), SDL::Rect.new(0, 0, 64, 30)), 10)
 		@numbers = SDL::Texture.new(SDL::Surface.load("../assets/score.png"), SDL::Rect.new(0, 0, 9, 11))
 		@dead = SDL::Texture.new(SDL::Surface.load("../assets/rex_dead.png"), SDL::Rect.new(0, 0, 40, 43))
 		# animations position set
@@ -134,7 +134,7 @@ class Ptero < Objekt
 
 	def initialize
 		super
-		@ptero = Animation.new(SDL::Surface.load("../assets/ptero.png"), SDL::Rect.new(0, 0, 46, 40), 10)
+		@ptero = Animation.new(SDL::Texture.new(SDL::Surface.load("../assets/ptero.png"), SDL::Rect.new(0, 0, 46, 40)), 10)
 		@ptero.pos.x = @window.w
 		@ptero.pos.y = (@window.h - (@ptero.rect.h * 1.5))
 		@y_factor = [1.25, 1.5, 2.5] # down, middle, up 
@@ -148,7 +148,7 @@ class Ptero < Objekt
 	end
 
 	def draw?(score, cactus_pos)
-		if score >= 100
+		if score >= 100 #&& cactus_pos[0].x <= 0 && cactus_pos[1].x <= 0
 			return true
 		end
 

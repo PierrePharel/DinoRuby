@@ -44,12 +44,12 @@ class Window
 	end
 
 	def draw
+		score = @rex.score[:str].to_i
 		time
-		can_draw = @ptero.draw?(@rex.score[:str].to_i, @land.cactus.get_pos)
-		@land.draw(can_draw, (@rex.score[:str].to_i % 100 == 0 && @rex.score[:str].to_i >= 100))
-		@ptero.draw if can_draw
- 		@rex.draw 
-		check_collision
+		@land.draw(score)
+		@ptero.draw if @ptero.draw?(score, @land.cactus.pos)
+		@rex.draw 
+		check_collision(score)
 	end
 
 	def isopen?
@@ -71,7 +71,10 @@ class Window
 		@state = :paused
 	end
 
-	def check_collision
+	def check_collision(score)
+		check_ptero_collision
+		check_cactus_collision #if !@ptero.draw?(score, @land.cactus.pos)
+=begin
 		if @rex.state == :jump
 			if SDL.check_collision?(@rex.jump.collision_box(0, -30), @ptero.ptero.collision_box(0, -10, 20, -30)) || SDL.check_collision?(@rex.jump.collision_box(10, -30, -30, -20), @land.cactus.collision_box)
 				@rex.state_old = @rex.state
@@ -94,5 +97,56 @@ class Window
 				pause
 			end
 		end	
+=end
+	end
+
+	def check_ptero_collision
+		if @rex.state == :jump
+			if SDL.check_collision?(@rex.jump.collision_box(0, -30), @ptero.ptero.collision_box(0, -10, 20, -30))
+				@rex.state_old = @rex.state
+				@rex.state = :dead
+				draw
+				pause
+			end
+		elsif @rex.state == :move_down
+			if SDL.check_collision?(@rex.down.collision_box(0, -30), @ptero.ptero.collision_box)
+				@rex.state_old = @rex.state
+				@rex.state = :dead
+				draw
+				pause
+			end
+		elsif @rex.state == :run 
+			if SDL.check_collision?(@rex.run.collision_box(0, -30), @ptero.ptero.collision_box(0, -10, 20, -30)) 
+				@rex.state_old = @rex.state
+				@rex.state = :dead
+				draw
+				pause
+			end 
+		end
+	end
+
+	def check_cactus_collision
+		if @rex.state == :jump
+			if SDL.check_collision?(@rex.jump.collision_box(10, -30, -30, -20), @land.cactus.collision_box)
+				@rex.state_old = @rex.state
+				@rex.state = :dead
+				draw
+				pause
+			end
+		elsif @rex.state == :move_down
+			if SDL.check_collision?(@rex.down.collision_box(0, -15), @land.cactus.collision_box)
+				@rex.state_old = @rex.state
+				@rex.state = :dead
+				draw
+				pause
+			end
+		elsif @rex.state == :run 
+			if SDL.check_collision?(@rex.run.collision_box(0, -10), @land.cactus.collision_box)
+				@rex.state_old = @rex.state
+				@rex.state = :dead
+				draw
+				pause
+			end 
+		end
 	end
 end
