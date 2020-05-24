@@ -45,11 +45,12 @@ class Window
 
 	def draw
 		score = @rex.score[:str].to_i
+		draw_ptero = @ptero.draw?(score, @land.cactus[0].pos)
 		time
-		@land.draw(score)
-		@ptero.draw if @ptero.draw?(score, @land.cactus.pos)
+		@land.draw(score, draw_ptero)
+		@ptero.draw if draw_ptero
 		@rex.draw 
-		check_collision(score)
+		check_collision(draw_ptero)
 	end
 
 	def isopen?
@@ -71,82 +72,49 @@ class Window
 		@state = :paused
 	end
 
-	def check_collision(score)
-		check_ptero_collision
+	def check_collision(draw_ptero)
+		check_ptero_collision if draw_ptero
 		check_cactus_collision #if !@ptero.draw?(score, @land.cactus.pos)
-=begin
-		if @rex.state == :jump
-			if SDL.check_collision?(@rex.jump.collision_box(0, -30), @ptero.ptero.collision_box(0, -10, 20, -30)) || SDL.check_collision?(@rex.jump.collision_box(10, -30, -30, -20), @land.cactus.collision_box)
-				@rex.state_old = @rex.state
-				@rex.state = :dead
-				draw
-				pause
-			end
-		elsif @rex.state == :move_down 
-			if SDL.check_collision?(@rex.down.collision_box(0, -30), @ptero.ptero.collision_box) || SDL.check_collision?(@rex.down.collision_box(0, -15), @land.cactus.collision_box)
-				@rex.state_old = @rex.state
-				@rex.state = :dead
-				draw
-				pause
-			end
-		elsif @rex.state == :run 
-			if SDL.check_collision?(@rex.run.collision_box(0, -30), @ptero.ptero.collision_box(0, -10, 20, -30)) || SDL.check_collision?(@rex.run.collision_box(0, -10), @land.cactus.collision_box)
-				@rex.state_old = @rex.state
-				@rex.state = :dead
-				draw
-				pause
-			end
-		end	
-=end
 	end
 
 	def check_ptero_collision
 		if @rex.state == :jump
 			if SDL.check_collision?(@rex.jump.collision_box(0, -30), @ptero.ptero.collision_box(0, -10, 20, -30))
-				@rex.state_old = @rex.state
-				@rex.state = :dead
-				draw
-				pause
+				collide
 			end
 		elsif @rex.state == :move_down
 			if SDL.check_collision?(@rex.down.collision_box(0, -30), @ptero.ptero.collision_box)
-				@rex.state_old = @rex.state
-				@rex.state = :dead
-				draw
-				pause
+				collide
 			end
 		elsif @rex.state == :run 
 			if SDL.check_collision?(@rex.run.collision_box(0, -30), @ptero.ptero.collision_box(0, -10, 20, -30)) 
-				@rex.state_old = @rex.state
-				@rex.state = :dead
-				draw
-				pause
+				collide
 			end 
 		end
 	end
 
 	def check_cactus_collision
-		if @rex.state == :jump
-			if SDL.check_collision?(@rex.jump.collision_box(10, -30, -30, -20), @land.cactus.collision_box)
-				@rex.state_old = @rex.state
-				@rex.state = :dead
-				draw
-				pause
+		if @land.cactus[0].rect != nil 
+			if @rex.state == :jump
+				if SDL.check_collision?(@rex.jump.collision_box(10, -30, -30, -20), @land.cactus[0].collision_box)
+					collide
+				end
+			elsif @rex.state == :move_down
+				if SDL.check_collision?(@rex.down.collision_box(0, -15), @land.cactus[0].collision_box)
+					collide
+				end
+			elsif @rex.state == :run 
+				if SDL.check_collision?(@rex.run.collision_box(0, -10), @land.cactus[0].collision_box)
+					collide
+				end 
 			end
-		elsif @rex.state == :move_down
-			if SDL.check_collision?(@rex.down.collision_box(0, -15), @land.cactus.collision_box)
-				@rex.state_old = @rex.state
-				@rex.state = :dead
-				draw
-				pause
-			end
-		elsif @rex.state == :run 
-			if SDL.check_collision?(@rex.run.collision_box(0, -10), @land.cactus.collision_box)
-				@rex.state_old = @rex.state
-				@rex.state = :dead
-				draw
-				pause
-			end 
 		end
+	end
+
+	def collide
+		@rex.state_old = @rex.state
+		@rex.state = :dead
+		draw
+		pause
 	end
 end

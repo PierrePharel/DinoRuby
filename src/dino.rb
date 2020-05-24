@@ -148,11 +148,12 @@ class Ptero < Objekt
 	end
 
 	def draw?(score, cactus_pos)
-		if score >= 100 #&& cactus_pos[0].x <= 0 && cactus_pos[1].x <= 0
+		@old_score = score if score % 100 == 0
+		if (score >= 500 && cactus_pos.x >= @window.w) && !(score >= (@old_score + 50) && @ptero.pos.x >= @window.w)
 			return true
 		end
 
-		return false
+		return false 
 	end
 
 	private

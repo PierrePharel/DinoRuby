@@ -15,15 +15,27 @@ class Land < Objekt
 		@xvel = 6
 		@x = [0, 0]
 		@pos = SDL::Vec2.new(0, (@window.h - @tex.rect.h) - 10)
-		@cactus = Cactus.new
+		@cactus = [Cactus.new, Cactus.new]
+		@old_score = 0
 	end
 
-	def draw(score)
+	def draw(score, draw_ptero)
 		# land 
 		animation
 		move
 		# cactus
-		@cactus.draw(@xvel, score)
+		@old_score = score if score % 100 == 0
+		if !draw_ptero
+			if @cactus[1].pos.x <= 300 || @cactus[1].pos.x > @cactus[0].pos.x || @cactus[1].pos.x >= @window.w || score >= 100
+				@cactus[0].draw(@xvel)
+			end
+
+			if !(score > 450 && @cactus[1].pos.x >= 600)
+				if (@cactus[0].pos.x <= 300 || @cactus[0].pos.x > @cactus[1].pos.x)
+					@cactus[1].draw(@xvel)
+				end
+			end
+		end
 	end
 
 	private
@@ -48,7 +60,7 @@ class Land < Objekt
 end
 
 class Cactus < Objekt
-	attr_reader :pos
+	attr_reader :pos, :rect
 
 	def initialize
 		super
@@ -60,13 +72,11 @@ class Cactus < Objekt
 		@pos = SDL::Vec2.new(600, 0)
 	end
 
-	def draw(xvel, score)
-		#if score % 100 != 0
-			gen if @pos.x >= @window.w
-			SDL::Surface.blit(@current_tex.img, @rect.x, @rect.y, @rect.w, @rect.h, @window, @pos.x, @pos.y)
-			move(xvel)
-			@pos.x = 600 if @pos.x <= -(@rect.w)
-		#end
+	def draw(xvel)
+		gen if @pos.x >= @window.w
+		SDL::Surface.blit(@current_tex.img, @rect.x, @rect.y, @rect.w, @rect.h, @window, @pos.x, @pos.y)
+		move(xvel)
+		@pos.x = 600 if @pos.x <= -(@rect.w)
 	end
 
 	private

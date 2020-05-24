@@ -9,17 +9,8 @@ module SDL
 	Texture = Struct.new(:img, :rect)
 	Key::NIL = nil
 	def check_collision?(box_a, box_b)
-		if box_b.class == Array
-			if box_b.size > 0
-				if (box_a.bottom <= box_b[0].top || box_a.top >= box_b[0].bottom || box_a.right <= box_b[0].left || box_a.left >= box_b[0].right) &&\
-				   (box_a.bottom <= box_b[1].top || box_a.top >= box_b[1].bottom || box_a.right <= box_b[1].left || box_a.left >= box_b[1].right)
-					return false
-				else
-					return true 
-				end		
-			end
-		else
-			return false if box_a.bottom <= box_b.top || box_a.top >= box_b.bottom || box_a.right <= box_b.left || box_a.left >= box_b.right 
+		if box_a.bottom <= box_b.top || box_a.top >= box_b.bottom || box_a.right <= box_b.left || box_a.left >= box_b.right
+			return false
 		end
 
 		return true
@@ -54,4 +45,3 @@ class Objekt
 		return box
 	end
 end
-
